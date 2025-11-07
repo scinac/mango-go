@@ -3,7 +3,6 @@ package mango_logger
 import (
 	"context"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"github.com/google/uuid"
 	"github.com/itchyny/gojq"
@@ -20,7 +19,7 @@ type MangoLogger struct {
 	LogWriter *lumberjack.Logger
 }
 
-var errStrictModeOn = errors.New(fmt.Sprintf("[STRICT_MODE ON] without required context fields %v", REQUIRED_FIELDS))
+var errStrictModeOn = fmt.Errorf("[STRICT_MODE ON] without required context fields %v", REQUIRED_FIELDS)
 
 func NewMangoLogger(config *LogConfig) *MangoLogger {
 	// Future idea to have multiple "appenders" in the mangoLogger that one can add, each with it's own logging configuration that it looks at
