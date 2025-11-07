@@ -9,39 +9,32 @@ on:
 permissions:
   contents: read
 
-jobs:
-  # ---------------------------
-  # 🔧 Define Strategy Matrix
-  # ---------------------------
-  define-strategy-matrix:
-    runs-on: ubuntu-latest
-    outputs:
-      matrix: ${{ steps.set-matrix.outputs.matrix }}
-    steps:
-      - id: set-matrix
-        run: |
-          echo '{
-            "os": ["ubuntu-latest", "macos-latest"],
-            "go": ["1.24", "1.25"],
-            "test-tags": [
-              "",
-              "-tags nomsgpack",
-              "--ldflags=\"-checklinkname=0\" -tags sonic",
-              "-tags go_json",
-              "-race"
-            ],
-            "include": [
-              {"os": "ubuntu-latest", "go-build": "~/.cache/go-build"},
-              {"os": "macos-latest", "go-build": "~/Library/Caches/go-build"}
-            ]
-          }' > matrix.json
-          echo "matrix=$(cat matrix.json)" >> "$GITHUB_OUTPUT"
 
+# ---------------------------
+# 🔧 Define Strategy Matrix
+# ---------------------------
+x-go-matrix: &go-matrix
+  os: [ ubuntu-latest, macos-latest ]
+  go: [ "1.24", "1.25" ]
+  test-tags:
+    [
+      "",
+      "-tags nomsgpack",
+      '--ldflags="-checklinkname=0" -tags sonic',
+      "-tags go_json",
+      "-race",
+    ]
+  include:
+    - os: ubuntu-latest
+      go-build: ~/.cache/go-build
+    - os: macos-latest
+      go-build: ~/Library/Caches/go-build
+
+jobs:
   # ---------------------------
   # 🧹 Lint Job
   # ---------------------------
   lint:
-    needs: define-strategy-matrix
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -62,9 +55,9 @@ jobs:
   # 🏗️ Build Job
   # ---------------------------
   build:
-    needs: [define-strategy-matrix, lint]
+    needs: [lint]
     strategy:
-      matrix: ${{ fromJson(needs.define-strategy-matrix.outputs.matrix) }}
+      matrix: *go-matrix
     name: Build (${{ matrix.os }} Go ${{ matrix.go }})
     runs-on: ${{ matrix.os }}
     env:
@@ -94,7 +87,7 @@ jobs:
   # 🧪 Test Job
   # ---------------------------
   test:
-    needs: [define-strategy-matrix, build]
+    needs: [build]
     strategy:
       matrix: ${{ fromJson(needs.define-strategy-matrix.outputs.matrix) }}
     name: Test (${{ matrix.os }} Go ${{ matrix.go }} ${{ matrix.test-tags }})
