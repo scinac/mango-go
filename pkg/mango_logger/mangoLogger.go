@@ -193,23 +193,23 @@ func (sl MangoLogger) handlePromptOutput(log *StructuredLog, jsonOut string) err
 	case slog.LevelDebug:
 		if sl.Config.Out.Cli.Verbose {
 			result, _ := formatWithGoJQ(jsonOut, sl.Config.Out.Cli.VerboseFormat)
-			fmt.Fprintln(os.Stdout, result)
+			_, _ = fmt.Fprintln(os.Stdout, result)
 		}
 	case slog.LevelInfo:
 		if sl.Config.Out.Cli.Friendly == true {
 			result, _ := formatWithGoJQ(jsonOut, sl.Config.Out.Cli.FriendlyFormat)
-			fmt.Fprintln(os.Stdout, result)
+			_, _ = fmt.Fprintln(os.Stdout, result)
 		} else {
-			fmt.Fprintln(os.Stdout, jsonOut)
+			_, _ = fmt.Fprintln(os.Stdout, jsonOut)
 		}
 	case slog.LevelWarn:
 		fallthrough
 	case slog.LevelError:
 		if sl.Config.Out.Cli.Friendly == true {
 			result, _ := formatWithGoJQ(jsonOut, sl.Config.Out.Cli.FriendlyFormat)
-			fmt.Fprintln(os.Stderr, result)
+			_, _ = fmt.Fprintln(os.Stderr, result)
 		} else {
-			fmt.Fprintln(os.Stderr, jsonOut)
+			_, _ = fmt.Fprintln(os.Stderr, jsonOut)
 		}
 	default:
 		fmt.Println("Record level not one of: debug, info, warn or error")
@@ -236,7 +236,7 @@ func mergeAttrs(list1, list2 []slog.Attr) []slog.Attr {
 }
 
 func getAllAttrs(record slog.Record) []slog.Attr {
-	attrs := []slog.Attr{}
+	var attrs []slog.Attr
 
 	record.Attrs(func(attr slog.Attr) bool {
 		attrs = append(attrs, attr)

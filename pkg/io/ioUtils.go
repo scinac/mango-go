@@ -120,13 +120,24 @@ func copyFile(dest string, source string) error {
 	if err != nil {
 		return err
 	}
-	defer sourceFile.Close()
+	defer func(sourceFile *os.File) {
+		err := sourceFile.Close()
+		if err != nil {
+			_ = fmt.Errorf("issue handling %s file", sourceFile)
+		}
+	}(sourceFile)
 
 	destFile, err := createFunc(dest)
 	if err != nil {
 		return err
 	}
-	defer destFile.Close()
+	defer func(destFile *os.File) {
+		err := destFile.Close()
+		if err != nil {
+			_ = fmt.Errorf("issue handling %s file", sourceFile)
+
+		}
+	}(destFile)
 
 	_, err = copyFunc(destFile, sourceFile) // should probably check the number of bytes copied
 	if err != nil {
