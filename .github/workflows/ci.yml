@@ -10,27 +10,35 @@ permissions:
   contents: read
 
 
-# ---------------------------
-# 🔧 Define Strategy Matrix
-# ---------------------------
-x-go-matrix: &go-matrix
-  os: [ ubuntu-latest, macos-latest ]
-  go: [ "1.24", "1.25" ]
-  test-tags:
-    [
-      "",
-      "-tags nomsgpack",
-      '--ldflags="-checklinkname=0" -tags sonic',
-      "-tags go_json",
-      "-race",
-    ]
-  include:
-    - os: ubuntu-latest
-      go-build: ~/.cache/go-build
-    - os: macos-latest
-      go-build: ~/Library/Caches/go-build
 
 jobs:
+
+  # ---------------------------
+  # 🔧 Define Strategy Matrix
+  # ---------------------------
+  _define:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ toJson(matrix) }}
+    strategy:
+      matrix: &go-matrix
+        os: [ ubuntu-latest, macos-latest ]
+        go: [ "1.24", "1.25" ]
+        test-tags:
+          [
+            "",
+            "-tags nomsgpack",
+            '--ldflags="-checklinkname=0" -tags sonic',
+            "-tags go_json",
+            "-race",
+          ]
+        include:
+          - os: ubuntu-latest
+            go-build: ~/.cache/go-build
+          - os: macos-latest
+            go-build: ~/Library/Caches/go-build
+    steps:
+      - run: echo "Matrix defined"
   # ---------------------------
   # 🧹 Lint Job
   # ---------------------------
@@ -55,7 +63,7 @@ jobs:
   # 🏗️ Build Job
   # ---------------------------
   build:
-    needs: [lint]
+    needs: [_define, lint]
     strategy:
       matrix: *go-matrix
     name: Build (${{ matrix.os }} Go ${{ matrix.go }})
@@ -87,7 +95,7 @@ jobs:
   # 🧪 Test Job
   # ---------------------------
   test:
-    needs: [build]
+    needs: [_define, build]
     strategy:
       matrix: ${{ fromJson(needs.define-strategy-matrix.outputs.matrix) }}
     name: Test (${{ matrix.os }} Go ${{ matrix.go }} ${{ matrix.test-tags }})
