@@ -45,7 +45,7 @@ var logConfig = &LogConfig{
 }
 
 var removeTemp = func() {
-	os.Remove(TEST_OUT_FILE_PATH)
+	_ = os.Remove(TEST_OUT_FILE_PATH)
 }
 
 func TestCreateMangoLoggerDefaultFormat(t *testing.T) {
@@ -234,9 +234,9 @@ func TestMangoLogger_Handle_StrictModeOn_CorrelationGenerated_ValidInfo(t *testi
 		t.Errorf("Error not expected from handling this log record")
 	}
 
-	w.Close()
+	_ = w.Close()
 	gotStdOut := readPipe(r)
-	wStdErr.Close()
+	_ = wStdErr.Close()
 	gotStdErr := readPipe(rStdErr)
 
 	assert.Equal(t, "", gotStdErr, "Stderr should be empty") // nothing to stderr
@@ -275,9 +275,9 @@ func TestMangoLogger_Handle_StrictModeOn_ProvidedCorrelation_ValidInfo(t *testin
 		t.Errorf("Error not expected from handling this log record")
 	}
 
-	w.Close()
+	_ = w.Close()
 	gotStdOut := readPipe(r)
-	wStdErr.Close()
+	_ = wStdErr.Close()
 	gotStdErr := readPipe(rStdErr)
 
 	assert.Equal(t, "", gotStdErr, "Stderr should be empty") // nothing to stderr
@@ -313,9 +313,9 @@ func TestMangoLogger_Handle_UnknownLevel(t *testing.T) {
 	// Action to test
 	err := mangoLogger.Handle(logContext, logRecord)
 	if err != nil {
-		w.Close()
+		_ = w.Close()
 		gotStdOut := readPipe(r)
-		wStdErr.Close()
+		_ = wStdErr.Close()
 		gotStdErr := readPipe(rStdErr)
 
 		assert.ErrorContains(t, err, "record level not one of: debug, info, warn or error")
@@ -597,9 +597,9 @@ func TestMangoLogger_Handle_ValidWarn(t *testing.T) {
 		t.Errorf("Error not expected from handling this log record")
 	}
 
-	wStdOut.Close()
+	_ = wStdOut.Close()
 	gotStdOut := readPipe(rStdOut)
-	wStdErr.Close()
+	_ = wStdErr.Close()
 	gotStdErr := readPipe(rStdErr)
 
 	expectedStdErr := "\"[WARN] - 0001-01-01T00:00:00Z - operation - " + msg + " - {}\"\n"
@@ -640,9 +640,9 @@ func TestMangoLogger_Handle_ValidError(t *testing.T) {
 		t.Errorf("Error not expected from handling this log record")
 	}
 
-	wStdOut.Close()
+	_ = wStdOut.Close()
 	gotStdOut := readPipe(rStdOut)
-	wStdErr.Close()
+	_ = wStdErr.Close()
 	gotStdErr := readPipe(rStdErr)
 
 	expectedStdErr := "\"[ERROR] - 0001-01-01T00:00:00Z - operation - " + msg + " - {}\"\n"
@@ -684,9 +684,9 @@ func TestMangoLogger_Handle_NoCLIFriendly_ValidError(t *testing.T) {
 		t.Errorf("Error not expected from handling this log record")
 	}
 
-	wStdOut.Close()
+	_ = wStdOut.Close()
 	gotStdOut := readPipe(rStdOut)
-	wStdErr.Close()
+	_ = wStdErr.Close()
 	gotStdErr := readPipe(rStdErr)
 
 	var logEntry StructuredLog
@@ -739,7 +739,7 @@ func TestMangoLogger_EffectivelyNoLogging(t *testing.T) {
 		t.Errorf("Error not expected from handling this log record")
 	}
 
-	w.Close()
+	_ = w.Close()
 	gotStdOut := readPipe(r)
 
 	expectedStdOut := "Effectively no logging enabled! The config.out.file.enabled, config.out.cli.enabled and config.out.syslog.facility flags are all false.\n"
@@ -775,7 +775,7 @@ func TestMangoLogger_OutDisabled(t *testing.T) {
 		t.Errorf("Error not expected from handling this log record")
 	}
 
-	w.Close()
+	_ = w.Close()
 	gotStdOut := readPipe(r)
 
 	expectedStdOut := "No logging enabled! Check config.out.enabled.\n"
@@ -815,9 +815,9 @@ func TestMangoLogger_Handle_StrictModeOn_Facility_Kern(t *testing.T) {
 		t.Errorf("Error not expected from handling this log record")
 	}
 
-	w.Close()
+	_ = w.Close()
 	gotStdOut := readPipe(r)
-	wStdErr.Close()
+	_ = wStdErr.Close()
 	gotStdErr := readPipe(rStdErr)
 
 	assert.Equal(t, "", gotStdErr, "Stderr should be empty") // nothing to stderr
@@ -858,9 +858,9 @@ func TestMangoLogger_Handle_StrictModeOn_Facility_User(t *testing.T) {
 		t.Errorf("Error not expected from handling this log record")
 	}
 
-	w.Close()
+	_ = w.Close()
 	gotStdOut := readPipe(r)
-	wStdErr.Close()
+	_ = wStdErr.Close()
 	gotStdErr := readPipe(rStdErr)
 
 	assert.Equal(t, "", gotStdErr, "Stderr should be empty") // nothing to stderr
@@ -901,9 +901,9 @@ func TestMangoLogger_Handle_StrictModeOn_Facility_Mail(t *testing.T) {
 		t.Errorf("Error not expected from handling this log record")
 	}
 
-	w.Close()
+	_ = w.Close()
 	gotStdOut := readPipe(r)
-	wStdErr.Close()
+	_ = wStdErr.Close()
 	gotStdErr := readPipe(rStdErr)
 
 	assert.Equal(t, "", gotStdErr, "Stderr should be empty") // nothing to stderr
@@ -944,9 +944,9 @@ func TestMangoLogger_Handle_StrictModeOn_Facility_Daemon(t *testing.T) {
 		t.Errorf("Error not expected from handling this log record")
 	}
 
-	w.Close()
+	_ = w.Close()
 	gotStdOut := readPipe(r)
-	wStdErr.Close()
+	_ = wStdErr.Close()
 	gotStdErr := readPipe(rStdErr)
 
 	assert.Equal(t, "", gotStdErr, "Stderr should be empty") // nothing to stderr
@@ -987,9 +987,9 @@ func TestMangoLogger_Handle_StrictModeOn_Facility_Auth(t *testing.T) {
 		t.Errorf("Error not expected from handling this log record")
 	}
 
-	w.Close()
+	_ = w.Close()
 	gotStdOut := readPipe(r)
-	wStdErr.Close()
+	_ = wStdErr.Close()
 	gotStdErr := readPipe(rStdErr)
 
 	assert.Equal(t, "", gotStdErr, "Stderr should be empty") // nothing to stderr
@@ -1030,9 +1030,9 @@ func TestMangoLogger_Handle_StrictModeOn_Facility_Syslog(t *testing.T) {
 		t.Errorf("Error not expected from handling this log record")
 	}
 
-	w.Close()
+	_ = w.Close()
 	gotStdOut := readPipe(r)
-	wStdErr.Close()
+	_ = wStdErr.Close()
 	gotStdErr := readPipe(rStdErr)
 
 	assert.Equal(t, "", gotStdErr, "Stderr should be empty") // nothing to stderr
@@ -1073,9 +1073,9 @@ func TestMangoLogger_Handle_StrictModeOn_Facility_News(t *testing.T) {
 		t.Errorf("Error not expected from handling this log record")
 	}
 
-	w.Close()
+	_ = w.Close()
 	gotStdOut := readPipe(r)
-	wStdErr.Close()
+	_ = wStdErr.Close()
 	gotStdErr := readPipe(rStdErr)
 
 	assert.Equal(t, "", gotStdErr, "Stderr should be empty") // nothing to stderr
@@ -1116,9 +1116,9 @@ func TestMangoLogger_Handle_StrictModeOn_Facility_Uucp(t *testing.T) {
 		t.Errorf("Error not expected from handling this log record")
 	}
 
-	w.Close()
+	_ = w.Close()
 	gotStdOut := readPipe(r)
-	wStdErr.Close()
+	_ = wStdErr.Close()
 	gotStdErr := readPipe(rStdErr)
 
 	assert.Equal(t, "", gotStdErr, "Stderr should be empty") // nothing to stderr
@@ -1159,9 +1159,9 @@ func TestMangoLogger_Handle_StrictModeOn_Facility_Cron(t *testing.T) {
 		t.Errorf("Error not expected from handling this log record")
 	}
 
-	w.Close()
+	_ = w.Close()
 	gotStdOut := readPipe(r)
-	wStdErr.Close()
+	_ = wStdErr.Close()
 	gotStdErr := readPipe(rStdErr)
 
 	assert.Equal(t, "", gotStdErr, "Stderr should be empty") // nothing to stderr
@@ -1202,9 +1202,9 @@ func TestMangoLogger_Handle_StrictModeOn_Facility_Authpriv(t *testing.T) {
 		t.Errorf("Error not expected from handling this log record")
 	}
 
-	w.Close()
+	_ = w.Close()
 	gotStdOut := readPipe(r)
-	wStdErr.Close()
+	_ = wStdErr.Close()
 	gotStdErr := readPipe(rStdErr)
 
 	assert.Equal(t, "", gotStdErr, "Stderr should be empty") // nothing to stderr
@@ -1245,9 +1245,9 @@ func TestMangoLogger_Handle_StrictModeOn_Facility_Ftp(t *testing.T) {
 		t.Errorf("Error not expected from handling this log record")
 	}
 
-	w.Close()
+	_ = w.Close()
 	gotStdOut := readPipe(r)
-	wStdErr.Close()
+	_ = wStdErr.Close()
 	gotStdErr := readPipe(rStdErr)
 
 	assert.Equal(t, "", gotStdErr, "Stderr should be empty") // nothing to stderr
@@ -1288,9 +1288,9 @@ func TestMangoLogger_Handle_StrictModeOn_Facility_Local0(t *testing.T) {
 		t.Errorf("Error not expected from handling this log record")
 	}
 
-	w.Close()
+	_ = w.Close()
 	gotStdOut := readPipe(r)
-	wStdErr.Close()
+	_ = wStdErr.Close()
 	gotStdErr := readPipe(rStdErr)
 
 	assert.Equal(t, "", gotStdErr, "Stderr should be empty") // nothing to stderr
@@ -1331,9 +1331,9 @@ func TestMangoLogger_Handle_StrictModeOn_Facility_Local1(t *testing.T) {
 		t.Errorf("Error not expected from handling this log record")
 	}
 
-	w.Close()
+	_ = w.Close()
 	gotStdOut := readPipe(r)
-	wStdErr.Close()
+	_ = wStdErr.Close()
 	gotStdErr := readPipe(rStdErr)
 
 	assert.Equal(t, "", gotStdErr, "Stderr should be empty") // nothing to stderr
@@ -1374,9 +1374,9 @@ func TestMangoLogger_Handle_StrictModeOn_Facility_Local2(t *testing.T) {
 		t.Errorf("Error not expected from handling this log record")
 	}
 
-	w.Close()
+	_ = w.Close()
 	gotStdOut := readPipe(r)
-	wStdErr.Close()
+	_ = wStdErr.Close()
 	gotStdErr := readPipe(rStdErr)
 
 	assert.Equal(t, "", gotStdErr, "Stderr should be empty") // nothing to stderr
@@ -1417,9 +1417,9 @@ func TestMangoLogger_Handle_StrictModeOn_Facility_Local3(t *testing.T) {
 		t.Errorf("Error not expected from handling this log record")
 	}
 
-	w.Close()
+	_ = w.Close()
 	gotStdOut := readPipe(r)
-	wStdErr.Close()
+	_ = wStdErr.Close()
 	gotStdErr := readPipe(rStdErr)
 
 	assert.Equal(t, "", gotStdErr, "Stderr should be empty") // nothing to stderr
@@ -1460,9 +1460,9 @@ func TestMangoLogger_Handle_StrictModeOn_Facility_Local4(t *testing.T) {
 		t.Errorf("Error not expected from handling this log record")
 	}
 
-	w.Close()
+	_ = w.Close()
 	gotStdOut := readPipe(r)
-	wStdErr.Close()
+	_ = wStdErr.Close()
 	gotStdErr := readPipe(rStdErr)
 
 	assert.Equal(t, "", gotStdErr, "Stderr should be empty") // nothing to stderr
@@ -1503,9 +1503,9 @@ func TestMangoLogger_Handle_StrictModeOn_Facility_Local5(t *testing.T) {
 		t.Errorf("Error not expected from handling this log record")
 	}
 
-	w.Close()
+	_ = w.Close()
 	gotStdOut := readPipe(r)
-	wStdErr.Close()
+	_ = wStdErr.Close()
 	gotStdErr := readPipe(rStdErr)
 
 	assert.Equal(t, "", gotStdErr, "Stderr should be empty") // nothing to stderr
@@ -1546,9 +1546,9 @@ func TestMangoLogger_Handle_StrictModeOn_Facility_Local6(t *testing.T) {
 		t.Errorf("Error not expected from handling this log record")
 	}
 
-	w.Close()
+	_ = w.Close()
 	gotStdOut := readPipe(r)
-	wStdErr.Close()
+	_ = wStdErr.Close()
 	gotStdErr := readPipe(rStdErr)
 
 	assert.Equal(t, "", gotStdErr, "Stderr should be empty") // nothing to stderr
@@ -1589,9 +1589,9 @@ func TestMangoLogger_Handle_StrictModeOn_Facility_Local7(t *testing.T) {
 		t.Errorf("Error not expected from handling this log record")
 	}
 
-	w.Close()
+	_ = w.Close()
 	gotStdOut := readPipe(r)
-	wStdErr.Close()
+	_ = wStdErr.Close()
 	gotStdErr := readPipe(rStdErr)
 
 	assert.Equal(t, "", gotStdErr, "Stderr should be empty") // nothing to stderr
@@ -1630,8 +1630,8 @@ func TestMangoLogger_Handle_StrictModeOn_Facility_Invalid(t *testing.T) {
 	// Action to test
 	err := mangoLogger.Handle(logContext, logRecord)
 	if err != nil {
-		w.Close()
-		wStdErr.Close()
+		_ = w.Close()
+		_ = wStdErr.Close()
 		gotStdErr := readPipe(rStdErr)
 
 		assert.ErrorContains(t, err, "facility level not valid")
@@ -1640,9 +1640,9 @@ func TestMangoLogger_Handle_StrictModeOn_Facility_Invalid(t *testing.T) {
 		t.Errorf("Error expected from handling invalid syslog facility")
 	}
 
-	w.Close()
+	_ = w.Close()
 	gotStdOut := readPipe(r)
-	wStdErr.Close()
+	_ = wStdErr.Close()
 	gotStdErr := readPipe(rStdErr)
 
 	assert.Equal(t, "", gotStdErr, "Stderr should be empty") // nothing to stderr
