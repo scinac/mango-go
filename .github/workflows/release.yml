@@ -60,9 +60,9 @@ jobs:
           prerelease: false
 
       - name: Install Hugo
-        uses: peaceiris/actions-hugo@v0.104.0
+        uses: peaceiris/actions-hugo@v2.9.1
         with:
-          hugo-version: '0.112.7'
+          hugo-version: '0.104.0'
 
       - name: Build Hugo site
         run: hugo --minify
