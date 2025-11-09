@@ -1,0 +1,113 @@
+name: Release & Publish Versioned Docs
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  release:
+    name: Generate Release Notes, Changelog, Release & Discussion
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Generate Release Notes
+        id: release_notes
+        uses: actions/github-script@v8
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const tag = context.ref.replace('refs/tags/', '');
+            const { data: releaseNotes } = await github.rest.repos.generateReleaseNotes({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              tag_name: tag,
+              target_commitish: tag
+            });
+            core.setOutput("notes", releaseNotes.body);
+
+      - name: Update Changelog
+        run: |
+          TAG_NAME=${GITHUB_REF##*/}
+          RELEASE_NOTES="${{ steps.release_notes.outputs.notes }}"
+          sed -i '2i ## $TAG_NAME \n\n$RELEASE_NOTES\n' docs/changelog.md
+
+      - name: Commit updated changelog
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add docs/changelog.md
+          git commit -m "Update changelog for ${{ github.ref_name }}" || echo "No changes to commit"
+          git push
+
+      - name: Create GitHub Release
+        id: create_release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: Release ${{ github.ref_name }}
+          body: ${{ steps.release_notes.outputs.notes }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create Discussion for Release
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const tag = context.ref.replace('refs/tags/', '');
+            const releaseNotes = `# Release ${tag}\n\n${{ steps.release_notes.outputs.notes }}`;
+            await github.rest.discussions.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              discussion_category_name: "Announcements"
+              title: `Release ${tag}`,
+              body: releaseNotes
+            });
+
+  publish_docs:
+    name: Build & Publish Versioned Hugo Docs
+    runs-on: ubuntu-latest
+    needs: release
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Hugo
+        uses: peaceiris/actions-hugo@v3
+        with:
+          hugo-version: 'latest'
+
+      - name: Prepare Versioned Docs
+        run: |
+          TAG_NAME=${GITHUB_REF##*/}
+          # Copy docs into versioned folder
+          mkdir -p docs_versions/$TAG_NAME
+          cp -r docs/* docs_versions/$TAG_NAME/
+          
+          # Update versions.json
+          if [ -f docs_versions/versions.json ]; then
+            jq --arg v "$TAG_NAME" 'if index($v) == null then . += [$v] else . end' docs_versions/versions.json > temp_versions.json
+            mv temp_versions.json docs_versions/versions.json
+          else
+            echo "[\"$TAG_NAME\"]" > docs_versions/versions.json
+          fi
+          
+          # Update currentVersion in Hugo config
+          sed -i "s/^currentVersion = .*/currentVersion = \"$TAG_NAME\"/" config.toml || echo "currentVersion = \"$TAG_NAME\"" >> config.toml
+
+      - name: Build Hugo Site
+        run: |
+          hugo --source docs_versions --destination public --minify
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v6
+        with:
+          publish_dir: ./public
+          publish_branch: gh-pages
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

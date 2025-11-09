@@ -1,6 +1,6 @@
-# mango4go - Change log
+# Change log
 
-## 1.0.0
+## 0.0.0
 
  * Random package
  * slices package
