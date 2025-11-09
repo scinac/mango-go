@@ -45,6 +45,7 @@
             <li><a href="#prerequisites">📘️ Prerequisites</a></li>
             <li><a href="#installation">🛠️ Installation</a></li>
             <li><a href="#packages">📦 Packages</a></li>
+            <li><a href="#developer-guide">🧑‍💻 Developer Guide</a></li>
         </ul>
     </li>
     <li>
@@ -55,6 +56,10 @@
         <ul>
             <li><a href="#how-to-contribute">❓ How to Contribute</a></li>
             <li><a href="#getting-started-with-contributing">✨ Getting started with contributing</a></li>
+            <li><a href="#make">🔧 Make</a></li>
+            <li><a href="#structure">📐 Structure</a></li>
+            <li><a href="#filename-convention">🔖 Filename convention</a></li>
+            <li><a href="#gremlins-coverage">👹 Gremlins coverage</a></li>
         </ul>
     </li>
     <li>
@@ -74,7 +79,12 @@
 
 ## <a id="about-the-project"></a>📋 About the project
 
+`mango-go` is a grab-bag of small, dependency-light utilities we found ourselves rewriting across services. Every package is:
 
+- **Focused** – each folder solves a single problem (logging, env parsing, random data, etc.).
+- **Drop-in** – import paths live under `github.com/bitstep-ie/mango-go/pkg/...`.
+- **Well-documented** – every package ships with dedicated docs plus a [developer guide](docs/developer-guide.md) full of copy-paste examples.
+- **CI-backed** – linted, tested, and mutation-tested in CI so helpers stay reliable.
 
 ## <a id="getting-started"></a>🚀 Getting started
 
@@ -87,6 +97,11 @@ All you need to start using mango-go
 
 ### <a id="installation"></a>🛠️ Installation
 
+```bash
+go get github.com/bitstep-ie/mango-go@latest
+```
+
+Modules are versioned, so you can pin a specific tag in `go.mod` if required.
 With [Go's module support](https://go.dev/wiki/Modules#how-to-use-modules), simply import mango-go in your code and Go will automatically fetch it during build:
 
 ```go
@@ -95,17 +110,106 @@ import "github.com/bitstep-ie/mango-go"
 
 ### <a id="packages"></a>📦 Packages 
 
-- compare
-- env
-- io
-- logger
-- testutils
-- time
+| Package | What it does | Docs |
+| --- | --- | --- |
+| `env` | read env vars with defaults or panic-on-missing helpers | [docs](docs/mango-go/packages/env.md) |
+| `io` | delete/backup/restore files by extension for safe inline edits | [docs](docs/mango-go/packages/io.md) |
+| `mango_logger` | opinionated slog handler with CLI/file/syslog outputs | [docs](docs/mango-go/packages/mclogger.md) |
+| `random` | math/crypto random helpers for fixtures, passwords, timestamps | [docs](docs/mango-go/packages/random.md) |
+| `slices` | generic slice utilities (contains, chunk, unique, etc.) | [docs](docs/mango-go/packages/slices.md) |
+| `testutils` | test helpers for temp files and UUID/token assertions | [docs](docs/mango-go/packages/testutils.md) |
+| `time` | start/end-of-day helpers, duration parsing, “time ago” strings | [docs](docs/mango-go/packages/time.md) |
+
+Looking for a tour that stitches these together?  
+👉 [Developer Guide](docs/developer-guide.md)
+
+### 🔁 Quick start
+
+```go
+package main
+
+import (
+    "context"
+    "log/slog"
+    "time"
+    mangoenv "github.com/bitstep-ie/mango-go/pkg/env"
+    mangolog "github.com/bitstep-ie/mango-go/pkg/mango_logger"
+    mangotime "github.com/bitstep-ie/mango-go/pkg/time"
+)
+
+func main() {
+    cfg := &mangolog.LogConfig{
+        MangoConfig: &mangolog.MangoConfig{
+            Strict: true,
+            CorrelationId: &mangolog.CorrelationIdConfig{AutoGenerate: true},
+        },
+        Out: &mangolog.OutConfig{
+            Enabled: true,
+            Cli:   &mangolog.CliConfig{Enabled: true, Friendly: true, Verbose: true},
+            File:  &mangolog.FileOutputConfig{Enabled: false},
+        },
+    }
+
+    logger := slog.New(mangolog.NewMangoLogger(cfg))
+    ctx := context.Background()
+    ctx = context.WithValue(ctx, mangolog.APPLICATION, "billing-api")
+    ctx = context.WithValue(ctx, mangolog.OPERATION, "invoice-create")
+    ctx = context.WithValue(ctx, mangolog.TYPE, mangolog.BusinessType)
+
+    timeout := mangoenv.EnvAsInt("HTTP_TIMEOUT", 15)
+    deadline := mangotime.TimeAgo(mangotime.EndOfDay(time.Now()))
+
+    logger.InfoContext(ctx, "ready to serve",
+        slog.Int("timeoutSeconds", timeout),
+        slog.String("deadline", deadline),
+    )
+}
+```
+
+Run the snippet to see CLI-friendly output plus structured JSON (when file logging is enabled).
+
+
+### <a id="developer-guide"></a>🧑‍💻 Developer Guide
+
+Looking for end-to-end examples that combine logging, environment loading, random data generation, time helpers, and more?  
+👉 Jump into [docs/developer-guide.md](docs/developer-guide.md).
+
+### <a id="developer-guide"></a>🧑‍💻 Developer Guide
+
+Looking for end-to-end examples that combine logging, environment loading, random data generation, time helpers, and more?  
+👉 Jump into [docs/developer-guide.md](docs/developer-guide.md).
 
 
 ## <a id="usage"></a>👨‍💻 Usage
 
+The packages are intentionally orthogonal, so feel free to mix and match:
 
+```go
+import (
+    "log/slog"
+    "time"
+    mangorand "github.com/bitstep-ie/mango-go/pkg/random"
+    mangoslices "github.com/bitstep-ie/mango-go/pkg/slices"
+    mangotime "github.com/bitstep-ie/mango-go/pkg/time"
+)
+
+func demo() {
+    orders := []int{1, 2, 2, 3}
+    if mangoslices.EqualsIgnoreOrder(orders, []int{3, 2, 2, 1}) {
+        token := mangorand.Password(20, mangorand.PasswordOptions{Letters: true, Digits: true})
+        start := mangotime.StartOfDay(time.Now())
+        end := mangotime.EndOfDay(time.Now())
+
+        slog.Info("processing window",
+            slog.String("token", token),
+            slog.String("start", start.Format(time.RFC3339)),
+            slog.String("end", end.Format(time.RFC3339)),
+        )
+    }
+}
+```
+
+Check each package doc (table above) for deeper walkthroughs and additional helpers.
 
 
 ## <a id="contributing"></a>📝 Contributing
@@ -152,4 +256,5 @@ We welcome and appreciate your contributions!
     <td align="center"><a href="https://github.com/bencarroll1"><img src="https://github.com/bencarroll1.png?size=100" width="100px;" alt="Ben"/><br /><sub><b>Ben</b></sub></a></td>
   </tr>
 </table>
+
 

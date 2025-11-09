@@ -1,54 +1,61 @@
-# mango4go - time
+# mango-go · `pkg/time`
 
-The `time` package provides time helper functions
+Utility functions for common calendaring tasks (start/end-of-day boundaries, relative checks), human-friendly “time ago” formatting, and extended duration parsing.
 
-## StartOfDay
-Returns the date at `00:00:00.000` in the same location.
+## Quick Start
 
-## EndOfDay
-Returns the last moment of the day `23:59:59.999999999` in the same location.
+```go
+import mangotime "github.com/bitstep-ie/mango-go/pkg/time"
 
-## IsToday 
-It checks if a timestamp is `today` in the current local timezone, compares after StartOfDay and before StartOfDay + 24h.
+now := time.Now()
+start := mangotime.StartOfDay(now)
+end := mangotime.EndOfDay(now)
 
-*Notes:*
-  - Exact StartOfDay today is considered today
-  - Exact EndOfDay today is considered today
+if mangotime.IsToday(now) {
+    fmt.Println("still today")
+}
 
-## IsTodayLoc 
-It checks if a timestamp is `today` in the specified `time.Location`, compares after StartOfDay and before StartOfDay + 24h.
-*Notes:*
-  - Exact StartOfDay today is considered today
-  - Exact EndOfDay today is considered today
+deadline, _ := mangotime.ParseDuration("1w2d12h")
+fmt.Println(mangotime.TimeAgo(time.Now().Add(-90 * time.Minute))) // "1 hour ago"
+```
 
-## IsTomorrow 
-Checks if a timestamp is `tomorrow` in the current local timezone.
-Compares after StartOfDay + 24h and before StartOfDay + 48h.
+## Calendar Helpers
 
-*Notes:*
-  - Exact StartOfDay tomorrow is considered tomorrow
-  - Exact EndOfDay tomorrow is considered tomorrow
+| Function | Description |
+| --- | --- |
+| `StartOfDay(t)` | midnight in the same location |
+| `EndOfDay(t)` | last nanosecond of the day |
+| `IsToday(t)` / `IsTomorrow(t)` | check relative to local time |
+| `IsTodayLoc(t, loc)` / `IsTomorrowLoc(t, loc)` | same checks using a custom `*time.Location` |
 
-## IsTomorrowLoc
-Checks if a timestamp is `tomorrow` in the specified `time.Location`. Compares after StartOfDay + 24h and before StartOfDay + 48h.
-*Notes:*
-  - Exact StartOfDay tomorrow is considered tomorrow
-  - Exact EndOfDay tomorrow is considered tomorrow
+Both “Is” helpers treat the exact boundary values as matches (`StartOfDay(t)` is “today”; `EndOfDay(t)` is still “today”).
 
-## ParseDuration 
-This extends `time.ParseDuration` to support `d` (days) and `w` (weeks).
-Replaces `d` with `24h`, `w` with `168h`, then pass to `time.ParseDuration`.
+## Duration Parsing
 
-### Example
-`2w1d2h30m` would return `362h30m0s` computed as: `2*168*time.Hour + 1*24*time.Hour + 2*time.Hour + 30*time.Minute`
+`ParseDuration` extends Go’s built-in parser with `d` (days) and `w` (weeks), including fractional values.
 
-## TimeAgo 
-Get a human friendly relative time formatting as follows:
-  -  <1m → "just now"
-  -  =1m → "1 minute ago"
-  -  <1h → "X minutes ago"
-  -  =24h → "1 hour ago"
-  -  <24h → "X hours ago"
-  -  <48h → "yesterday"
-  -  otherwise → "X days ago"
-Currently this offers fixed english versions, we can explore the options of using i18n in a future release.
+```go
+dur, err := mangotime.ParseDuration("2w1.5d30m")
+// -> 2 weeks + 1.5 days + 30 minutes
+```
+
+If the string is empty, the function returns an error. For other invalid formats, it falls back to `time.ParseDuration`’s error.
+
+## Relative Formatting
+
+`TimeAgo(t)` (and the internal `timeAgoWithNow(t, now)`) return concise English strings:
+
+- `<1m` → `just now`
+- `=1m` → `1 minute ago`
+- `<1h` → `X minutes ago`
+- `<24h` → `X hours ago`
+- `<48h` → `yesterday`
+- otherwise → `X days ago`
+
+Ideal for CLI or UI messages without pulling in a full i18n library.
+
+## Tips
+
+- Use `IsTodayLoc` / `IsTomorrowLoc` when you store timestamps in UTC but need to reason about a customer’s timezone.
+- Combine `StartOfDay` + `Add(24*time.Hour)` to build custom windows (e.g., “this business day”).
+- When parsing human input (cron-like configs, CLI flags), accept strings such as `90m`, `2d`, `1w12h30m` to keep UX flexible.

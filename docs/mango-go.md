@@ -10,7 +10,7 @@ go get github.com/bitstep-ie/mango-go@v0.5.0
 
 ## Packages
 
-See the [list of all packages and their detailed documentation](mango-go/packages.md)
+See the [list of all packages and their detailed documentation](mango-go/README.md)
 
 ## Changelog
 
