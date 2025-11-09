@@ -1,4 +1,4 @@
-# mango-go · `pkg/mango_logger`
+# mango-go · `pkg/logger`
 
 A structured logging handler built on top of `log/slog`. It fans each record out to CLI, rotating files (via `lumberjack`), and syslog simultaneously, while enforcing context contracts such as `type`, `application`, and `operation`.
 
@@ -8,7 +8,7 @@ A structured logging handler built on top of `log/slog`. It fans each record out
 import (
     "context"
     "log/slog"
-    mangolog "github.com/bitstep-ie/mango-go/pkg/mango_logger"
+    mangolog "github.com/bitstep-ie/mango-go/pkg/logger"
 )
 
 func newLogger() *slog.Logger {

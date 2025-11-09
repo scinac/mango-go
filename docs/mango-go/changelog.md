@@ -9,7 +9,7 @@
  * Env helpers
  * Upgrade Dependencies
  * Windows fix for syslog write
- * mcLogger syslog support
+ * Logger syslog support
  * Syslog write
  * Reducing cognitive complexity
  * Documentation cleanup

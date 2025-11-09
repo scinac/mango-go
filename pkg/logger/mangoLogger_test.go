@@ -214,7 +214,7 @@ func TestHandlePromptOutput_DefaultFallback(t *testing.T) {
 
 func TestHandleFileOutput_AllLevels(t *testing.T) {
 	// Create a temporary file for logging
-	tmpFile, err := os.CreateTemp("", "mango_logger_test_*.log")
+	tmpFile, err := os.CreateTemp("", "logger_test_*.log")
 	assert.NoError(t, err)
 	defer func(name string) {
 		_ = os.Remove(name)
@@ -308,7 +308,7 @@ func TestHandleFileOutput_FileDisabled(t *testing.T) {
 
 func TestHandleFileOutput_InvalidLevel(t *testing.T) {
 	// Logger config with file enabled
-	tmpFile, err := os.CreateTemp("", "mango_logger_test_invalid_level_*.log")
+	tmpFile, err := os.CreateTemp("", "logger_test_invalid_level_*.log")
 	assert.NoError(t, err)
 	defer func(name string) {
 		_ = os.Remove(name)
