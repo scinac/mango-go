@@ -1,71 +1,70 @@
-# mango4go - io
+# mango-go · `pkg/io`
 
-The `io` package is aimed to be a useful package for utilities working with the filesystem.
+Small filesystem helpers for bulk operations (delete, backup, restore) based on file extensions. The package walks a directory tree, so you can prepare rollbacks or cleanups with a single call.
 
-## DeleteFileWithExt
+## Quick Start
 
-DeleteFileWithExt will delete all the files from the specified dir that have extensions matching in the list. The extensions list must contain values in the format .<ext>. It supports exact matches only, of the final file extension.
+```go
+import mangoio "github.com/bitstep-ie/mango-go/pkg/io"
 
-For example if the file found in dir is named file-name.txt.bak .bak is the determined extension for comparison.
+func rotateConfigs(dir string) error {
+    if err := mangoio.BackupFilesWithExt(dir, []string{".yaml", ".json"}); err != nil {
+        return err
+    }
 
-### How to use it?
+    // … mutate configs here …
 
-```go language=go
-// Import the library package desired
-import "github.com/bitstep-ie/mango-go/io"
-
-// ... rest of your code
-
-// delete all the .txt files
-err := DeleteFileWithExt(dirPath, []string{".txt"})
-if errs != nil {
-	// handle the error
+    return mangoio.RestoreAllBakFiles(dir)
 }
 ```
 
+## API Overview
 
-## BackupFilesWithExt
+| Function | Description |
+| --- | --- |
+| `DeleteFileWithExt(dir, []string{".log"})` | remove every matching file (no prompt) |
+| `BackupFilesWithExt(dir, []string{".conf"})` | copy `foo.conf → foo.conf.bak` |
+| `RestoreAllBakFiles(dir)` | copy `*.bak` back to originals and remove the `.bak` files |
 
-BackupFilesWithExt will create an inline (same folder) copy (adding suffix of .bak to the original names) of the files with the extensions.
+> Extensions must include the leading dot (`.log`). Matches are based on the final path extension (`file.txt.bak` is treated as `.bak`).
 
-It does not delete the original files
+## Usage Patterns
 
-### How to use it?
+### Cleaning Generated Files
 
-```go language=go
-// Import the library package desired
-import "github.com/bitstep-ie/mango-go/io"
-
-// ... rest of your code
-
-// backup all .txt files
-err := BackupFilesWithExt(dirPath, []string{".txt"})
-if errs != nil {
-	// handle the error
+```go
+func cleanArtifacts(dir string) error {
+    return mangoio.DeleteFileWithExt(dir, []string{".tmp", ".bak"})
 }
-// all the files .txt from dirPath will be copied into .txt.bak
 ```
 
+### Safe Inline Backups
 
-## RestoreAllBakFiles
+```go
+func upgrade(dir string) error {
+    // 1. duplicate target files
+    if err := mangoio.BackupFilesWithExt(dir, []string{".json"}); err != nil {
+        return err
+    }
 
-RestoreAllBakFiles copies all the bak files into their respective original (dropping .bak extension) files and deletes the .bak files
+    // 2. apply your upgrade logic
+    if err := runMigration(dir); err != nil {
+        // roll back
+        _ = mangoio.RestoreAllBakFiles(dir)
+        return err
+    }
 
-Existing original files will be overwritten.
-
-
-### How to use it?
-
-```go language=go
-// Import the library package desired
-import "github.com/bitstep-ie/mango-go/io"
-
-// ... rest of your code
-
-// backup all .txt files
-err := BackupFilesWithExt(dirPath, []string{".txt"})
-if errs != nil {
-	// handle the error
+    // 3. cleanup backups if desired
+    return mangoio.DeleteFileWithExt(dir, []string{".bak"})
 }
-// all the files .txt from dirPath will be copied into .txt.bak
 ```
+
+## Testing Hooks
+
+Internally the package swaps `os.Remove`, `filepath.Walk`, and copy operations with overridable function variables to simplify unit tests. In production you never touch these, but the pattern means you can inject fakes when writing tests for your code that depends on `pkg/io`.
+
+## Tips
+
+- Run these helpers on the narrowest directory possible to avoid traversing large trees.
+- All operations are best-effort: once a delete or copy fails, the function returns the first error with the file path.
+- `RestoreAllBakFiles` overwrites existing originals. Use `BackupFilesWithExt` immediately before mutations if you need a guaranteed rollback path.

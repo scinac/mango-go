@@ -1,58 +1,44 @@
-# mango4go - testutils
+# mango-go · `pkg/testutils`
 
-The `testutils` package is to contain useful functions for testing
+Testing helpers that reduce boilerplate when working with temporary files and structured assertions.
 
+```go
+import (
+    "os"
+    "testing"
+    testutils "github.com/bitstep-ie/mango-go/pkg/testutils"
+)
 
-## MustMakeTempFile
-It will create a temporary file in the dir using the fileNamePattern.
-Failure to create the temp file will result in t.Fatalf
+func TestProcessor(t *testing.T) {
+    tmp := testutils.MustMakeTempFile(t, t.TempDir(), "payload-*.json")
+    defer os.Remove(tmp.Name())
 
-### How to use it?
+    // write fixture data, run code under test…
 
-```go language=go
-// Import the library package desired
-import "github.com/bitstep-ie/mango-go/testutils"
-
-// ... rest of your code
-
-// create the temporary file
-tempFile := testutils.MustMakeTempFile(t, t., "tempfile-*.txt")
+    testutils.AssertValidUUID(t, got.LogID, "logId")
+    testutils.ContainsAllRunes(t, got.Token, "!@#", "token must include punctuation")
+}
 ```
 
+## Helpers
 
-## AssertValidUUID
-Validates the value sent in is a valid uuid, by attempting to parse the value using `github.com/google/uuid` `Parse`, and any errors are reported as assertion.
-The fieldName passed in will be used in error message printout.
+### `MustMakeTempFile(t, dir, pattern) *os.File`
 
-### How to use it?
+- Creates a file using `os.CreateTemp`.
+- Fails the test via `assert.Fail` if creation fails.
+- Closes the returned file automatically; reopen with `os.Open` if you need to append later.
 
-```go language=go
-// Import the library package desired
-import "github.com/bitstep-ie/mango-go/testutils"
+### `AssertValidUUID(t, value, fieldName)`
 
-// ... rest of your code
+- Delegates to `uuid.Parse`.
+- Fails the test with a friendly message that includes `fieldName`.
 
-// assert valid UUID
-invalidUuidValue := "invalidUUID"
-validUuidValue := "f7198919-bb3e-4ff0-9746-72d913f8a812"
-testutils.AssertValidUUID(t, invalidUuidValue, "correlationId") // this will assert
-testutils.AssertValidUUID(t, validUuidValue, "correlationId") // this will pass
-```
+### `ContainsAllRunes(t, str, chars, msgAndArgs...)`
 
-## ContainsAllRunes
-Validates all runes in `chars` exist in `str`.
+- Ensures every rune in `chars` exists at least once in `str`.
+- Useful for asserting generated passwords or tokens meet composition rules.
 
+## Tips
 
-### How to use it?
-
-```go language=go
-// Import the library package desired
-import "github.com/bitstep-ie/mango-go/testutils"
-
-// ... rest of your code
-
-// assert chars in str
-str := "abcdef"
-chars := "ace"
-testutils.ContainsAllRunes(t, str, chars, "Message for failure")
-```
+- The helpers pull in `stretchr/testify/assert`, so you can mix these with other testify assertions without additional setup.
+- When using `MustMakeTempFile`, prefer `t.TempDir()` so Go cleans up the directory after the test run.
