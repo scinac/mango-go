@@ -13,12 +13,13 @@ import (
 )
 
 func newTestLogger(cliEnabled, fileEnabled bool, strict bool, autoGenCorr bool) *MangoLogger {
+	tmpFile, _ := os.CreateTemp("", "test-*.log")
 	config := &LogConfig{
 		Out: &OutConfig{
 			Enabled: true,
 			File: &FileOutputConfig{
 				Enabled:    fileEnabled,
-				Path:       "test.log",
+				Path:       tmpFile.Name(),
 				MaxSize:    1,
 				MaxBackups: 1,
 				MaxAge:     1,
@@ -69,8 +70,8 @@ func TestMangoLogger_AllLevels(t *testing.T) {
 			err := logger.Handle(ctx, record)
 			assert.NoError(t, err)
 
-			wOut.Close()
-			wErr.Close()
+			_ = wOut.Close()
+			_ = wErr.Close()
 			var bufOut, bufErr bytes.Buffer
 			_, _ = bufOut.ReadFrom(rOut)
 			_, _ = bufErr.ReadFrom(rErr)
@@ -203,7 +204,7 @@ func TestHandlePromptOutput_DefaultFallback(t *testing.T) {
 	err := logger.handlePromptOutput(record, `{"message":"hello"}`)
 	assert.NoError(t, err)
 
-	w.Close()
+	_ = w.Close()
 	var buf bytes.Buffer
 	_, _ = buf.ReadFrom(r)
 	os.Stdout = oldOut
@@ -215,8 +216,12 @@ func TestHandleFileOutput_AllLevels(t *testing.T) {
 	// Create a temporary file for logging
 	tmpFile, err := os.CreateTemp("", "mango_logger_test_*.log")
 	assert.NoError(t, err)
-	defer os.Remove(tmpFile.Name())
-	defer tmpFile.Close()
+	defer func(name string) {
+		_ = os.Remove(name)
+	}(tmpFile.Name())
+	defer func(tmpFile *os.File) {
+		_ = tmpFile.Close()
+	}(tmpFile)
 
 	// Logger config with file output enabled
 	config := &LogConfig{
@@ -266,13 +271,14 @@ func TestHandleFileOutput_AllLevels(t *testing.T) {
 }
 
 func TestHandleFileOutput_FileDisabled(t *testing.T) {
+	tmpFile, err := os.CreateTemp("", "should_not_exist-*.log")
 	// Logger config with file output disabled
 	config := &LogConfig{
 		Out: &OutConfig{
 			Enabled: true,
 			File: &FileOutputConfig{
 				Enabled: false,
-				Path:    "should_not_exist.log",
+				Path:    tmpFile.Name(),
 			},
 			Cli:    &CliConfig{Enabled: false},
 			Syslog: &SyslogConfig{},
@@ -296,7 +302,7 @@ func TestHandleFileOutput_FileDisabled(t *testing.T) {
 	jsonOut := `{"Level":"INFO","Message":"Should not write"}`
 
 	// Should not error even if file is disabled
-	err := logger.handleFileOutput(logOutput, jsonOut)
+	err = logger.handleFileOutput(logOutput, jsonOut)
 	assert.NoError(t, err)
 }
 
@@ -304,8 +310,12 @@ func TestHandleFileOutput_InvalidLevel(t *testing.T) {
 	// Logger config with file enabled
 	tmpFile, err := os.CreateTemp("", "mango_logger_test_invalid_level_*.log")
 	assert.NoError(t, err)
-	defer os.Remove(tmpFile.Name())
-	defer tmpFile.Close()
+	defer func(name string) {
+		_ = os.Remove(name)
+	}(tmpFile.Name())
+	defer func(tmpFile *os.File) {
+		_ = tmpFile.Close()
+	}(tmpFile)
 
 	config := &LogConfig{
 		Out: &OutConfig{
