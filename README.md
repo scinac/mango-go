@@ -1,3 +1,4 @@
+[![CI](https://github.com/bitstep-ie/mango-go/actions/workflows/ci.yml/badge.svg)](https://github.com/bitstep-ie/mango-go/actions/workflows/ci.yml)
 [![CodeQL](https://github.com/bitstep-ie/mango-go/actions/workflows/codeql.yml/badge.svg)](https://github.com/bitstep-ie/mango-go/actions/workflows/codeql.yml)
 [![Dependabot](https://github.com/bitstep-ie/mango-go/actions/workflows/dependabot/dependabot-updates/badge.svg)](https://github.com/bitstep-ie/mango-go/actions/workflows/dependabot/dependabot-updates)
 [![codecov](https://codecov.io/github/bitstep-ie/mango-go/graph/badge.svg?token=L6EJH29N5L)](https://codecov.io/github/bitstep-ie/mango-go)

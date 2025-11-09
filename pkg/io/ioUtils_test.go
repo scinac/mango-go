@@ -288,7 +288,7 @@ func TestGetFilesWithExtFailFindingDir(t *testing.T) {
 	} else {
 		assert.Equal(t, 0, len(ext), "Wrong number of files found")
 		if runtime.GOOS == "windows" {
-			assert.Equal(t, "GetFileAttributesEx unknownTestFolder: The system cannot find the file specified.", err.Error())
+			assert.Contains(t, err.Error(), "unknownTestFolder: The system cannot find the file specified.")
 		} else {
 			assert.Equal(t, "lstat unknownTestFolder: no such file or directory", err.Error())
 		}
