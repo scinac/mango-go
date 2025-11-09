@@ -1,4 +1,4 @@
-package mango_logger
+package logger
 
 import "log/slog"
 

@@ -1,6 +1,6 @@
 //go:build windows
 
-package mango_logger
+package logger
 
 type SyslogConfig struct {
 	// Facility refers to the syslog facility of a given log

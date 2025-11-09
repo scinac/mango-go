@@ -1,5 +1,5 @@
-// Package slogger is a specific logging library on top of slog with additional loggness
-package mango_logger
+// Package logger is a specific logging library on top of slog with additional goodness
+package logger
 
 // Default output formats
 const (
@@ -115,6 +115,6 @@ type CliConfig struct {
 	Verbose bool `yaml:"verbose" json:"verbose"`
 
 	// VerboseFormat of the DEBUG statements output in verbose mode
-	// Defaults to print the whole json object of mango_logger.StructuredLog (using DefaultVerboseFormat)
+	// Defaults to print the whole json object of logger.StructuredLog (using DefaultVerboseFormat)
 	VerboseFormat string `yaml:"verbose-format" json:"verboseFormat"`
 }

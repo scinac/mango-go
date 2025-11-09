@@ -1,6 +1,6 @@
 //go:build !windows
 
-package mango_logger
+package logger
 
 import (
 	"fmt"

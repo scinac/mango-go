@@ -1,26 +1,3 @@
-[//]: # (TODO)
-# Contributing
-
-When contributing to this repository, please discuss the change you wish to make in our UPDATE-TODO, or
-pickup one of the TODO tasks from the ISSUES-UPDATE-TODO.
-
-Please note we have a code of conduct, please follow it in all your interactions with the project.
-
-## Pull Request Process
-
-- Fork the repository to your own personal Bitbucket space
-    - Ensure you allow permissions to read to dfda-cicd user (this is to allow CI to build your branch)
-- Create a new feature branch off the develop branch
-- Implement your changes in the new feature branch
-- Ensure that the codebase is adequately covered by tests
-  - Gremlins thresholds must be met
-  - Unit test coverage (for sonar) must be met
-  - *Note:* to help with this you can use `make all` locally
-- Create a pull request from your feature branch back to the develop branch on this repo
-
-Before a pull request can be merged it will require:
-- A minimum of two approvals
-- Passing build
 
 ## Code of Conduct
 
@@ -53,3 +30,4 @@ Instances or abusive, harassing, or otherwise unacceptable behaviour may be repo
 
 ### Attribution
 This Code of Conduct is adapted from the [Contributor Covenant](https://www.contributor-covenant.org/), version 1.4, available at [http://contributor-covenant.org/version/1/4](http://contributor-covenant.org/version/1/4)
+

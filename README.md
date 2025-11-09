@@ -33,51 +33,65 @@
 </div>
 <br />
 <!-- TABLE OF CONTENTS -->
-    <details>
-      <summary>📂 Table of Contents</summary>
-      <ol>
-        <li>
-            <a href="#about-the-project">📋 About The Project</a>
-        </li>
-        <li>
-            <a href="#getting-started">🚀 Getting Started</a>
-            <ul>
-                <li><a href="#installation">🛠️ Installation</a></li>
-                <li><a href="#packages">📦 Packages</a></li>
-            </ul>
-        </li>
-        <li>
-            <a href="#usage">👨‍💻 Usage</a>
-        </li>
-        <li>
-            <a href="#contributing">📝 Contributing</a>
-            <ul>
-                <li><a href="#make">🔧 Make</a></li>
-                <li><a href="#structure">📐 Structure</a></li>
-                <li><a href="#filename-convention">🔖 Filename convention</a></li>
-                <li><a href="#gremlins-coverage">👹 Gremlins coverage</a></li>
-            </ul>
-        </li>
-        <li>
-            <a href="#license">📜 License</a>
-        </li>
-        <li>
-            <a href="#acknowledgments">👏 Acknowledgments</a>
-            <ul>
-                <a href="#contributors">🤝 Contributors</a>
-            </ul>
-        </li>
-      </ol>
-    </details>
+<details>
+  <summary>📂 Table of Contents</summary>
+  <ol>
+    <li>
+        <a href="#about-the-project">📋 About The Project</a>
+    </li>
+    <li>
+        <a href="#getting-started">🚀 Getting Started</a>
+        <ul>
+            <li><a href="#prerequisites">📘️ Prerequisites</a></li>
+            <li><a href="#installation">🛠️ Installation</a></li>
+            <li><a href="#packages">📦 Packages</a></li>
+        </ul>
+    </li>
+    <li>
+        <a href="#usage">👨‍💻 Usage</a>
+    </li>
+    <li>
+        <a href="#contributing">📝 Contributing</a>
+        <ul>
+            <li><a href="#how-to-contribute">❓ How to Contribute</a></li>
+            <li><a href="#getting-started-with-contributing">✨ Getting started with contributing</a></li>
+        </ul>
+    </li>
+    <li>
+        <a href="#license">📜 License</a>
+    </li>
+    <li>
+        <a href="#acknowledgments">👏 Acknowledgments</a>
+        <ul>
+            <a href="#contributors">🤝 Contributors</a>
+            <a href="#special-mentions">🙌 Special Mentions</a>
+        </ul>
+    </li>
+  </ol>
+</details>
 
 
 
 ## <a id="about-the-project"></a>📋 About the project
 
+
+
 ## <a id="getting-started"></a>🚀 Getting started
+
+All you need to start using mango-go
+
+### <a id="prerequisites"></a>📘️ Prerequisites
+
+- **Go version**: mango-go requires [Go](https://go.dev/) version [1.24](https://go.dev/doc/devel/release#go1.24.0) or above
+- **Basic Go knowledge**: Familiarity with Go syntax and package management is helpful
 
 ### <a id="installation"></a>🛠️ Installation
 
+With [Go's module support](https://go.dev/wiki/Modules#how-to-use-modules), simply import mango-go in your code and Go will automatically fetch it during build:
+
+```go
+import "github.com/bitstep-ie/mango-go"
+```
 
 ### <a id="packages"></a>📦 Packages 
 
@@ -96,45 +110,41 @@
 
 ## <a id="contributing"></a>📝 Contributing
 
-Do you have a useful function? Do you have something that could be useful to others?
+We welcome and appreciate your contributions!
 
-Yes please! [See our starting guidelines](contributing.md). Your help is very welcome!
+### <a id="how-to-contribute"></a>❓ How to Contribute
 
-### <a id="make"></a>🔧 Make
+- 🐛 Report bugs - Help us identify and fix issues
+- 💡 Suggest features - Share your ideas for improvements
+- 📝 Improve documentation - Help make our docs clearer
+- 🔧 Submit code - Fix bugs or implement new features
+- 🧪 Write tests - Improve our test coverage
 
-You can use `make all` to ensure all the checks are performed before you push the code on a remote branch and open PR which will execute the github actions.
 
-The makefile is to help with local development of the library by giving you the exact steps that the ci will execute.
+### <a id="getting-started-with-contributing"></a>✨ Getting started with contributing
 
-This makefile will NOT be used as part of builds.
+- Check out our [contributing.md](CONTRIBUTING) for detailed guidelines
+- Join our community discussions and ask questions
 
-It is up to you if you deviate from the github actions, do so at your own risk and should not be committed back into the project.
 
-### <a id="structure"></a>📐 Structure
-
-Try to keep common functions in existing packages, and follow the same pattern if required to create a new package. Update documentation as required, and make sure to note any breaking changes clearly in the PR and ofc debate on the mango teams channel if it requires and how to handle version increase.
-
-### <a id="filename-convention"></a>🔖 Filename convention
-For basic packages try to match to this convention:
-`smallCaseUtils.go`
-`smallCaseUtils_test.go`
-
-Larger packages requiring multiple files (e.g: `mclogger`), has no current structure convention.
-
-### <a id="gremlins-coverage"></a>👹 Gremlins coverage
-
-Both `efficacy` & `mutant-coverage` sit at `95%`. Aim for this or higher, the build will fail if these thresholds are not met. Under committee review if necessary these thresholds will be reviewed.
+**All contributions are valued and help make mango better for everyone!**
 
 
 ## <a id="license"></a>📜 License
 
+![image](https://img.shields.io/badge/Apache--2.0-green?style=for-the-badge)
 
 ## <a id="acknowledgments"></a>👏 Acknowledgments
 
 
+
 ### <a id="contributors"></a>🤝 Contributors
 
-Thanks goes to these wonderful people:
+ <a href = "https://github.com/bitstep-ie/mango-go/graphs/contributors">
+   <img src = "https://contrib.rocks/image?repo=bitstep-ie/mango-go"/>
+ </a>
+
+### <a id="special-mentions"></a>🙌 Special Mentions
 
 <table align="center">
   <tr>

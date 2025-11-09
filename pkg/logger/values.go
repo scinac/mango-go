@@ -1,4 +1,4 @@
-package mango_logger
+package logger
 
 // RFC3339NanoMC is the desired timestamp output format
 const RFC3339NanoMC = "2006-01-02T15:04:05.999Z0700"
