@@ -44,6 +44,7 @@
             <ul>
                 <li><a href="#installation">🛠️ Installation</a></li>
                 <li><a href="#packages">📦 Packages</a></li>
+                <li><a href="#developer-guide">🧑‍💻 Developer Guide</a></li>
             </ul>
         </li>
         <li>
@@ -87,6 +88,11 @@
 - mango_logger
 - testutils
 - time
+
+### <a id="developer-guide"></a>🧑‍💻 Developer Guide
+
+Looking for end-to-end examples that combine logging, environment loading, random data generation, time helpers, and more?  
+👉 Jump into [docs/developer-guide.md](docs/developer-guide.md).
 
 
 ## <a id="usage"></a>👨‍💻 Usage
@@ -142,4 +148,3 @@ Thanks goes to these wonderful people:
     <td align="center"><a href="https://github.com/bencarroll1"><img src="https://github.com/bencarroll1.png?size=100" width="100px;" alt="Ben"/><br /><sub><b>Ben</b></sub></a></td>
   </tr>
 </table>
-
