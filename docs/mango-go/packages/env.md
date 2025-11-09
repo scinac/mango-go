@@ -1,131 +1,63 @@
-# mango4go - env
+# mango-go · `pkg/env`
 
-The `env` package provides small functions for environment variables manipulation.
+Helpers for reading configuration from environment variables with sensible defaults and explicit “must” variants that panic when a value is missing or malformed.
 
+## Quick Start
 
-## EnvOrDefault
-It returns the value of the environment variable, or the default specified.
+```go
+import mangoenv "github.com/bitstep-ie/mango-go/pkg/env"
 
-*Note:* the check for environment variable existence is done by comparison to empty string (`""`). 
+type Config struct {
+    Port        int
+    EnableHTTPS bool
+    Secret      string
+}
 
-### How to use it?
-
-```go language=go
-// Import the library package desired
-import "github.com/bitstep-ie/mango-go/env"
-
-// ... rest of your code
-
-// get the environment variable
-value := env.EnvOrDefault("ENV_KEY", "some-default-value")
-// now value will have ENV_KEY value if present, or "some-default-value" if ENV_KEY doesn't exist in the environment
+func Load() Config {
+    return Config{
+        Port:        mangoenv.EnvAsInt("PORT", 8080),
+        EnableHTTPS: mangoenv.EnvAsBool("ENABLE_HTTPS", false),
+        Secret:      mangoenv.MustEnv("API_SECRET"),
+    }
+}
 ```
 
+## API Cheatsheet
 
-## MustEnv
-It returns the value of the environment variable or panics
+| Function | Purpose |
+| --- | --- |
+| `EnvOrDefault(key, fallback string)` | string with fallback |
+| `MustEnv(key)` | string or panic if empty |
+| `EnvAsInt(key, fallback int)` / `MustEnvAsInt(key)` | parse integer values |
+| `EnvAsBool(key, fallback bool)` / `MustEnvAsBool(key)` | parse boolean values |
 
-*Note:* the check for environment variable existence is done by comparison to empty string (`""`).
+Each helper treats “missing” as `""` and panics with descriptive messages for invalid conversions.
 
-### How to use it?
+## Examples
 
-```go language=go
-// Import the library package desired
-import "github.com/bitstep-ie/mango-go/env"
+### Strings
 
-// ... rest of your code
-
-// get the environment variable
-value := env.MustEnv("ENV_KEY")
-// now value will have ENV_KEY value
-// panics otherwise
+```go
+name := mangoenv.EnvOrDefault("SERVICE_NAME", "checkout")
+token := mangoenv.MustEnv("BEARER_TOKEN") // panic if unset
 ```
 
+### Integers
 
-## EnvAsInt
-It returns the value of the environment variable as `integer`, and the default value if it doesn't exist.
-
-Panic if the value is **NOT** an `integer`.
-
-*Note:* the check for environment variable existence is done by comparison to empty string (`""`).
-
-### How to use it?
-
-```go language=go
-// Import the library package desired
-import "github.com/bitstep-ie/mango-go/env"
-
-// ... rest of your code
-
-// get the environment variable
-value := env.EnvAsInt("ENV_KEY", 7)
-// now value will have ENV_KEY value as integer (panic if not an integer)
-// or the default value 7 if it doesn't exist
+```go
+maxConnections := mangoenv.EnvAsInt("MAX_CONN", 10)
+timeout := mangoenv.MustEnvAsInt("REQUEST_TIMEOUT_SECONDS")
 ```
 
+### Booleans
 
-
-## MustEnvAsInt
-It returns the value of the environment variable as `integer`, and panics if it doesn't exist.
-
-Panic if the value is **NOT** an `integer`.
-
-*Note:* the check for environment variable existence is done by comparison to empty string (`""`).
-
-### How to use it?
-
-```go language=go
-// Import the library package desired
-import "github.com/bitstep-ie/mango-go/env"
-
-// ... rest of your code
-
-// get the environment variable
-value := env.MustEnvAsInt("ENV_KEY")
-// now value will have ENV_KEY value as integer (panic if not an integer)
-// or panics if it doesn't exist
+```go
+debug := mangoenv.EnvAsBool("DEBUG", false)
+tlsOnly := mangoenv.MustEnvAsBool("TLS_ONLY")
 ```
 
+## Tips
 
-## EnvAsBool
-It returns the value of the environment variable as `bool`, and default value if it doesn't exist.
-
-Panic if the value is **NOT** a `bool`.
-
-*Note:* the check for environment variable existence is done by comparison to empty string (`""`).
-
-### How to use it?
-
-```go language=go
-// Import the library package desired
-import "github.com/bitstep-ie/mango-go/env"
-
-// ... rest of your code
-
-// get the environment variable
-value := env.EnvAsBool("ENV_KEY", false)
-// now value will have ENV_KEY value as bool (panic if not a bool)
-// or default value if it doesn't exist
-```
-
-
-## MustEnvAsBool
-It returns the value of the environment variable as `bool`, and panics if it doesn't exist.
-
-Panic if the value is **NOT** a `bool`.
-
-*Note:* the check for environment variable existence is done by comparison to empty string (`""`).
-
-### How to use it?
-
-```go language=go
-// Import the library package desired
-import "github.com/bitstep-ie/mango-go/env"
-
-// ... rest of your code
-
-// get the environment variable
-value := env.MustEnvAsBool("ENV_KEY")
-// now value will have ENV_KEY value as bool (panic if not a bool)
-// or panics if it doesn't exist
-```
+- Use `EnvAs*` when you can tolerate defaults (local dev) and `MustEnv*` for production-critical knobs.
+- Panics happen on invalid formats (e.g., `EnvAsInt("PORT")` with `PORT=abc`). Keep these calls near bootstrapping code so the service fails fast.
+- Wrap lookups in a struct constructor (see Quick Start) to centralize configuration logic.

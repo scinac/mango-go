@@ -1,64 +1,71 @@
-# mango4go - random
+# mango-go · `pkg/random`
 
-The `random` package provides random helpers
+Convenience helpers for building fixtures, tokens, and fuzz data. Functions span deterministic math/rand utilities and crypto-safe password generation.
 
+## Quick Start
 
-## Number 
-Returns a random number in the range [min, max] inclusive for int and [min, max) for floats. Safely swaps max & min
-### Limitations
-  - uses math/rand (not safe for concurrent use, not for security-sensitive use)
-  - overflow warning on extreme ranges
+```go
+import (
+    "math/rand"
+    "time"
+    mangorand "github.com/bitstep-ie/mango-go/pkg/random"
+)
 
+func init() {
+    rand.Seed(time.Now().UnixNano()) // seed math/rand once per process
+}
 
-## Sign
-As simple as returning either +1 or -1 randomly
+func example() {
+    promo := mangorand.String(8)
+    orderID := mangorand.Number[int](1000, 9999)
+    mustRun := mangorand.Bool()
+    secret := mangorand.Password(24, mangorand.PasswordOptions{
+        Letters: true,
+        Digits:  true,
+        Symbols: true,
+        Exclude: "O0l1",
+    })
+    _ = []any{promo, orderID, mustRun, secret}
+}
+```
 
+## API Highlights
 
-## Bool 
-Randomly returns either true or false
+### Numbers & Booleans
 
+- `Number[T Num](min, max T)` – inclusive range for ints/uints, `[min,max)` for floats. Automatically swaps min/max.
+- `Sign()` – returns `+1` or `-1`.
+- `Bool()` – coin flip.
+- `Choice(slice []T)` – pick a random element, panics on empty slice.
 
-## Choice
-Picks a random element from a non-empty slice. **Panics** if the slice is `empty`.
+### Bytes & Strings
 
+- `Byte()` – cryptographically secure random byte.
+- `String(n)` – alphanumeric (upper+lowercase, digits).
+- `Alpha(n)` / `Numeric(n)` – letters-only or digits-only.
+- `FromCharset(n, charset)` – supply your own rune set.
 
-## Byte
-Returns a single secure random byte [0,255]
+### Passwords
 
+```go
+pw := mangorand.Password(16, mangorand.PasswordOptions{
+    Letters: true,
+    Digits:  true,
+    Symbols: false,
+})
+```
 
-## String 
-You get a random alphanumeric string of length n. Includes both `lowercase` and `uppercase` letters.
+Options allow mixing letters, digits, symbols, plus excluding ambiguous characters. Generation uses `crypto/rand` so the output is safe for access tokens and human passwords. Panics if the resulting charset would be empty.
 
+### Time Helpers
 
-## Alpha 
-Get random letters - length n. Includes both `lowercase` and `uppercase` letters.
+- `Date(min, max time.Time)` – inclusive random timestamp.
+- `Duration(min, max time.Duration)` – inclusive random duration.
 
+Both helpers swap arguments when `min > max`, making it easy to mock “recent” or “soon” values without extra branching.
 
-## Numeric
-Get a random string of digits of length n.
+## Tips
 
-
-## FromCharset
-Returns a random string from your specific charset
-
-
-## Password 
-Generates a random password of length n according to provided options. 
-**Panics** if no charsets selected (or effectively not selected - e.g: excluding all options)
-
-### PasswordOptions
-  - Letters: a-zA-Z
-  - Digits: 0-9
-  - Symbols: !@#$%^&*()-_=+[]{}<>?/|~
-  - Exclude: all strings you don't want to take part in password generation
-
-
-## Date 
-Random `time.Time` between `[min, max]` (inclusive)
-*Note:* Safely swaps `min` and `max` if `min>max`.
-
-
-## Duration 
-Random `time.Duration` between `[min, max]` (inclusive)
-*Note:* Safely swaps `min` and `max` if `min>max`.
-
+- Only the functions under “Numbers & Booleans” rely on `math/rand`; seed it once during startup for non-deterministic sequences.
+- `Choice` and `Password` panic when misused; wrap them in helper functions if you need error returns instead.
+- Combine `PasswordOptions{Symbols: true}` with `testutils.ContainsAllRunes` to assert generated strings hit every required character class in tests.

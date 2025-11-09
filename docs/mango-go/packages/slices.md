@@ -1,56 +1,66 @@
-# mango4go - slices
+# mango-go · `pkg/slices`
 
-The `slices` package is aimed to be a useful package for utilities working with `slices`.
+Generic helpers for common slice patterns—membership, counting, chunking, reversing, and deduplication—without re-writing loops at every callsite.
 
+## Quick Start
 
-## EqualsIgnoreOrder
-It compares two splices ignoring the order of elements. Returns true if both slices contain the same elements (and same frequency of same elements), regardless of order of elements.
+```go
+import mangoslices "github.com/bitstep-ie/mango-go/pkg/slices"
 
-### How to use it?
-
-```go language=go
-// Import the library package desired
-import "github.com/bitstep-ie/mango-go/slices"
-
-// ... rest of your code
-
-// compare slices as needed and save the result
-areEqual := slices.EqualsIgnoreOrder([]string{"World", "Hello"}, []string{"hello", "world"})
+names := []string{"amy", "ben", "amy"}
+if mangoslices.Contains(names, "ben") {
+    idx := mangoslices.IndexOf(names, "amy") // 0
+    freq := mangoslices.ContainsCount(names, "amy") // 2
+    unique := mangoslices.Unique(names) // ["amy","ben"]
+    chunks := mangoslices.Chunk(names, 2) // [["amy","ben"],["amy"]]
+    _ = []any{idx, freq, unique, chunks}
+}
 ```
 
-## Contains
-Returns `true` if `value` is found. *Empty* slice always returns `false`.
+## API Reference
 
+| Function | Description |
+| --- | --- |
+| `EqualsIgnoreOrder(a, b)` | compare two slices while ignoring element order but respecting multiplicity |
+| `Contains(slice, value)` | membership test |
+| `ContainsCount(slice, value)` | count occurrences |
+| `IndexOf(slice, value)` | index of first match (`-1` if missing) |
+| `IndexOfAll(slice, value)` | every index that matches |
+| `Unique(slice)` | deduplicated copy preserving first-seen order |
+| `Reverse(slice)` | in-place reversal |
+| `Chunk(slice, size)` | split into evenly sized batches (last chunk may be smaller) |
 
-## ContainsCount
-Returns the `count` of `value` findings in the slice.
+All helpers are generic (Go 1.18+) and therefore type-safe across ints, structs, strings, etc. Functions that mutate (`Reverse`) do so in-place; the rest allocate new slices as needed.
 
+## Examples
 
-## IndexOf 
-Returns `index` of *first match*. Similar to `strings.Index`. *Empty* slice / *no finding* returns -1.
+### EqualsIgnoreOrder
 
+```go
+a := []int{1, 2, 2, 3}
+b := []int{3, 2, 1, 2}
+same := mangoslices.EqualsIgnoreOrder(a, b) // true
+```
 
-## IndexOfAll
-Returns all *indexes* of `value` findings, empty slice if no findings.
-### Example
-`IndexOfAll([]int{1, 2, 1, 3, 1}, 1))` 
-will return 
-`[]int{0, 2, 4}` which represent all the positions where the value for search (`1` can be found)
+### IndexOfAll
 
+```go
+positions := mangoslices.IndexOfAll([]string{"ca", "ba", "ca"}, "ca")
+// []int{0, 2}
+```
 
-## Unique (deduplication)
-Returns a new slice containing *only the unique values* from slice.
+### Chunk (Batching)
 
+```go
+jobs := []int{1, 2, 3, 4, 5}
+batches := mangoslices.Chunk(jobs, 2)
+// [][]int{{1,2}, {3,4}, {5}}
+```
 
-## Reverse
-Flips the contents of the slice.
+> `Chunk` panics when `size <= 0`; validate user input before calling it.
 
+## Tips
 
-## Chunk 
-Returns a slice of slices of size (last may be smaller). **Panics** when `size <= 0`.
-
-### Example
-`Chunk([]int{1, 2, 3, 4, 5}, 2))`
-will return:
-`[][]int{{1, 2}, {3, 4}, {5}}`
-In plain english, get slices of size 2 from this larger slice.
+- These helpers are a drop-in replacement for small anonymous loops, making tests and production code easier to read.
+- Combine `Unique` + `Chunk` to dedupe and batch IDs before fan-out.
+- `EqualsIgnoreOrder` is helpful in tests for comparing slices where ordering is non-deterministic.
