@@ -45,7 +45,7 @@
             <li><a href="#prerequisites">📘️ Prerequisites</a></li>
             <li><a href="#installation">🛠️ Installation</a></li>
             <li><a href="#packages">📦 Packages</a></li>
-                <li><a href="#developer-guide">🧑‍💻 Developer Guide</a></li>
+            <li><a href="#developer-guide">🧑‍💻 Developer Guide</a></li>
         </ul>
     </li>
     <li>
@@ -168,6 +168,11 @@ func main() {
 
 Run the snippet to see CLI-friendly output plus structured JSON (when file logging is enabled).
 
+
+### <a id="developer-guide"></a>🧑‍💻 Developer Guide
+
+Looking for end-to-end examples that combine logging, environment loading, random data generation, time helpers, and more?  
+👉 Jump into [docs/developer-guide.md](docs/developer-guide.md).
 
 ### <a id="developer-guide"></a>🧑‍💻 Developer Guide
 
