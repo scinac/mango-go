@@ -29,7 +29,9 @@
             💡 Request Feature
         </a>
     </p>
-    <!-- TABLE OF CONTENTS -->
+</div>
+<br />
+<!-- TABLE OF CONTENTS -->
     <details>
       <summary>📂 Table of Contents</summary>
       <ol>
@@ -66,7 +68,6 @@
         </li>
       </ol>
     </details>
-</div>
 
 
 
