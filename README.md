@@ -56,10 +56,6 @@
         <ul>
             <li><a href="#how-to-contribute">❓ How to Contribute</a></li>
             <li><a href="#getting-started-with-contributing">✨ Getting started with contributing</a></li>
-            <li><a href="#make">🔧 Make</a></li>
-            <li><a href="#structure">📐 Structure</a></li>
-            <li><a href="#filename-convention">🔖 Filename convention</a></li>
-            <li><a href="#gremlins-coverage">👹 Gremlins coverage</a></li>
         </ul>
     </li>
     <li>
@@ -173,12 +169,6 @@ Run the snippet to see CLI-friendly output plus structured JSON (when file loggi
 
 Looking for end-to-end examples that combine logging, environment loading, random data generation, time helpers, and more?  
 👉 Jump into [docs/developer-guide.md](docs/developer-guide.md).
-
-### <a id="developer-guide"></a>🧑‍💻 Developer Guide
-
-Looking for end-to-end examples that combine logging, environment loading, random data generation, time helpers, and more?  
-👉 Jump into [docs/developer-guide.md](docs/developer-guide.md).
-
 
 ## <a id="usage"></a>👨‍💻 Usage
 
