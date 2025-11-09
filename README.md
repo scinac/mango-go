@@ -6,7 +6,13 @@
 <br />
 <div align="center">
   <a href="https://github.com/bitstep-ie/mango-go">
-    <img src="images/logo.svg" alt="Mango Logo" width="80" height="80">
+    <picture>
+      <source srcset="images/mango-with-text-black.png" media="(prefers-color-scheme: light)">
+      <!-- Dark mode image -->
+      <source srcset="images/mango-with-text-white.png" media="(prefers-color-scheme: dark)">
+      <!-- Fallback -->
+      <img src="images/mango-with-text-black.png" alt="Mango-Go Logo">
+    </picture>
   </a>
 
 <h3 align="center">mango-go</h3>
