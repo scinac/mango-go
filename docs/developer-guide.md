@@ -27,7 +27,7 @@ Inside your module, import the packages you need:
 import (
     mangoenv "github.com/bitstep-ie/mango-go/pkg/env"
     mangoio "github.com/bitstep-ie/mango-go/pkg/io"
-    mangolog "github.com/bitstep-ie/mango-go/pkg/mango_logger"
+    mangolog "github.com/bitstep-ie/mango-go/pkg/logger"
     mangorand "github.com/bitstep-ie/mango-go/pkg/random"
     mangoslices "github.com/bitstep-ie/mango-go/pkg/slices"
     mangotime "github.com/bitstep-ie/mango-go/pkg/time"
@@ -49,7 +49,7 @@ package main
 import (
     "context"
     "log/slog"
-    mangolog "github.com/bitstep-ie/mango-go/pkg/mango_logger"
+    mangolog "github.com/bitstep-ie/mango-go/pkg/logger"
 )
 
 func main() {

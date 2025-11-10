@@ -56,10 +56,6 @@
         <ul>
             <li><a href="#how-to-contribute">❓ How to Contribute</a></li>
             <li><a href="#getting-started-with-contributing">✨ Getting started with contributing</a></li>
-            <li><a href="#make">🔧 Make</a></li>
-            <li><a href="#structure">📐 Structure</a></li>
-            <li><a href="#filename-convention">🔖 Filename convention</a></li>
-            <li><a href="#gremlins-coverage">👹 Gremlins coverage</a></li>
         </ul>
     </li>
     <li>
@@ -114,7 +110,7 @@ import "github.com/bitstep-ie/mango-go"
 | --- | --- | --- |
 | `env` | read env vars with defaults or panic-on-missing helpers | [docs](docs/mango-go/packages/env.md) |
 | `io` | delete/backup/restore files by extension for safe inline edits | [docs](docs/mango-go/packages/io.md) |
-| `mango_logger` | opinionated slog handler with CLI/file/syslog outputs | [docs](docs/mango-go/packages/mclogger.md) |
+| `logger` | opinionated slog handler with CLI/file/syslog outputs | [docs](docs/mango-go/packages/logger) |
 | `random` | math/crypto random helpers for fixtures, passwords, timestamps | [docs](docs/mango-go/packages/random.md) |
 | `slices` | generic slice utilities (contains, chunk, unique, etc.) | [docs](docs/mango-go/packages/slices.md) |
 | `testutils` | test helpers for temp files and UUID/token assertions | [docs](docs/mango-go/packages/testutils.md) |
@@ -133,7 +129,7 @@ import (
     "log/slog"
     "time"
     mangoenv "github.com/bitstep-ie/mango-go/pkg/env"
-    mangolog "github.com/bitstep-ie/mango-go/pkg/mango_logger"
+    mangolog "github.com/bitstep-ie/mango-go/pkg/logger"
     mangotime "github.com/bitstep-ie/mango-go/pkg/time"
 )
 
@@ -173,12 +169,6 @@ Run the snippet to see CLI-friendly output plus structured JSON (when file loggi
 
 Looking for end-to-end examples that combine logging, environment loading, random data generation, time helpers, and more?  
 👉 Jump into [docs/developer-guide.md](docs/developer-guide.md).
-
-### <a id="developer-guide"></a>🧑‍💻 Developer Guide
-
-Looking for end-to-end examples that combine logging, environment loading, random data generation, time helpers, and more?  
-👉 Jump into [docs/developer-guide.md](docs/developer-guide.md).
-
 
 ## <a id="usage"></a>👨‍💻 Usage
 
