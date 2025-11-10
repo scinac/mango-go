@@ -1,0 +1,19 @@
+# 'documentation' label to any changes within 'docs' folder or any subfolders
+documentation:
+  - changed-files:
+      - any-glob-to-any-file: docs/**
+
+# 'feature' label to any changes within 'pkg' folder or any subfolders
+feature:
+  - changed-files:
+      - any-glob-to-any-file: pkg/**
+
+# 'config' label to any changes within '.github' folder or any subfolders
+config:
+  - changed-files:
+      - any-glob-to-any-file: .github/**
+
+# 'legal' Label for these type of files
+legal:
+  - changed-files:
+      - any-glob-to-any-file: ["LICENSE*", "NOTICES*", "CODE_OF_CONDUCT*", "CONTRIBUTING*"]
