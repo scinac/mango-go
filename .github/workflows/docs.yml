@@ -41,7 +41,7 @@ jobs:
             echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
           else
             echo "VERSION=${GITHUB_SHA::7}" >> $GITHUB_ENV
-            echo "PREV_VERSION=$(git rev-parse HEAD^)" >> $GITHUB_ENV
+            echo "PREV_VERSION=$(git rev-parse -short HEAD^)" >> $GITHUB_ENV
             echo "DEV=1" >> $GITHUB_ENV
           fi
       - name: Deploy new version with mike
