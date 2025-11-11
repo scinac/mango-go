@@ -50,7 +50,7 @@ jobs:
           # Deploy version
           if [[ "${DEV}" == 1 ]]; then
             mike deploy $VERSION development -u --push
-            mike delete $PREV_VERSION
+            mike delete $PREV_VERSION || true
           else
             mike deploy $VERSION latest -u --push
           fi
