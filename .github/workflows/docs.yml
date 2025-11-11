@@ -47,3 +47,12 @@ jobs:
             echo "Deploying latest from main"
             mike deploy --push --update-aliases latest --config-file mkdocs.yml
           fi
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v7
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: documentation/site
+          user_name: github-actions[bot]
+          user_email: github-actions[bot]@users.noreply.github.com
+          keep_files: true
