@@ -52,17 +52,12 @@ jobs:
           if [[ "${GITHUB_REF}" == refs/tags/* ]]; then
             echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
           else
-            echo "VERSION=latest" >> $GITHUB_ENV
+            echo "VERSION=0.0.1" >> $GITHUB_ENV
           fi
 
       - name: Deploy new version with mike
         working-directory: documentation
         run: |
-          # Delete previous 'latest' alias if redeploying main
-          if [[ "$VERSION" == "latest" ]] && mike list | grep -q "^latest$"; then
-            mike delete latest --config-file mkdocs.yml
-          fi
-          
           # Deploy version
           mike deploy $VERSION latest --update-aliases --config-file mkdocs.yml
 
