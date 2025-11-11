@@ -59,7 +59,7 @@ jobs:
         working-directory: documentation
         run: |
           # Deploy version
-          mike deploy $VERSION $VERSION --update-aliases --config-file mkdocs.yml
+          mike deploy $VERSION
 
       - name: Publish to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
