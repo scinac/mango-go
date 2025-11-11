@@ -52,14 +52,14 @@ jobs:
           if [[ "${GITHUB_REF}" == refs/tags/* ]]; then
             echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
           else
-            echo "VERSION=0.0.1" >> $GITHUB_ENV
+            echo "VERSION=${GITHUB_SHA::7}" >> $GITHUB_ENV
           fi
 
       - name: Deploy new version with mike
         working-directory: documentation
         run: |
           # Deploy version
-          mike deploy $VERSION latest --update-aliases --config-file mkdocs.yml
+          mike deploy $VERSION $VERSION --update-aliases --config-file mkdocs.yml
 
       - name: Publish to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
