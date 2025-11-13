@@ -3,8 +3,8 @@ documentation:
   - changed-files:
       - any-glob-to-any-file: documentation/**
 
-# 'feature' label to any changes within 'pkg' folder or any subfolders
-feature:
+# 'enhancement' label to any changes within 'pkg' folder or any subfolders
+enhancement:
   - changed-files:
       - any-glob-to-any-file: pkg/**
 
