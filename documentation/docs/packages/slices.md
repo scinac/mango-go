@@ -1,6 +1,7 @@
 # `pkg/slices`
 
-Generic helpers for common slice patterns—membership, counting, chunking, reversing, and deduplication—without re-writing loops at every callsite.
+Generic helpers for common slice patterns—membership, counting, chunking, reversing, and deduplication—without
+re-writing loops at every callsite.
 
 ## Quick Start
 
@@ -9,30 +10,39 @@ import mangoslices "github.com/bitstep-ie/mango-go/pkg/slices"
 
 names := []string{"amy", "ben", "amy"}
 if mangoslices.Contains(names, "ben") {
-    idx := mangoslices.IndexOf(names, "amy") // 0
-    freq := mangoslices.ContainsCount(names, "amy") // 2
-    unique := mangoslices.Unique(names) // ["amy","ben"]
-    chunks := mangoslices.Chunk(names, 2) // [["amy","ben"],["amy"]]
-    _ = []any{idx, freq, unique, chunks}
+idx := mangoslices.IndexOf(names, "amy") // 0
+freq := mangoslices.ContainsCount(names, "amy") // 2
+unique := mangoslices.Unique(names) // ["amy","ben"]
+chunks := mangoslices.Chunk(names, 2) // [["amy","ben"],["amy"]]
+_ = []any{idx, freq, unique, chunks}
 }
 ```
 
 ## API Reference
 
-| Function | Description |
-| --- | --- |
-| `EqualsIgnoreOrder(a, b)` | compare two slices while ignoring element order but respecting multiplicity |
-| `Contains(slice, value)` | membership test |
-| `ContainsCount(slice, value)` | count occurrences |
-| `IndexOf(slice, value)` | index of first match (`-1` if missing) |
-| `IndexOfAll(slice, value)` | every index that matches |
-| `Unique(slice)` | deduplicated copy preserving first-seen order |
-| `Reverse(slice)` | in-place reversal |
-| `Chunk(slice, size)` | split into evenly sized batches (last chunk may be smaller) |
+| Function                      | Description                                                                        |
+|-------------------------------|------------------------------------------------------------------------------------|
+| `Flatten(a)`                  | Flattens a slice of slices into a single slice with all elements in the same order |
+| `EqualsIgnoreOrder(a, b)`     | compare two slices while ignoring element order but respecting multiplicity        |
+| `Contains(slice, value)`      | membership test                                                                    |
+| `ContainsCount(slice, value)` | count occurrences                                                                  |
+| `IndexOf(slice, value)`       | index of first match (`-1` if missing)                                             |
+| `IndexOfAll(slice, value)`    | every index that matches                                                           |
+| `Unique(slice)`               | deduplicated copy preserving first-seen order                                      |
+| `Reverse(slice)`              | in-place reversal                                                                  |
+| `Chunk(slice, size)`          | split into evenly sized batches (last chunk may be smaller)                        |
 
-All helpers are generic (Go 1.18+) and therefore type-safe across ints, structs, strings, etc. Functions that mutate (`Reverse`) do so in-place; the rest allocate new slices as needed.
+All helpers are generic (Go 1.18+) and therefore type-safe across ints, structs, strings, etc. Functions that mutate (
+`Reverse`) do so in-place; the rest allocate new slices as needed.
 
 ## Examples
+
+### Flatten
+
+```go
+nums := [][]int{{1, 2}, {3, 4, 5}}
+flat := Flatten(nums) // flat == []int{1, 2, 3, 4, 5}
+```
 
 ### EqualsIgnoreOrder
 
