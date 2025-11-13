@@ -1,7 +1,5 @@
 # Contributing
 
-# Contributing
-
 We welcome both issue reports and pull requests! Please follow these guidelines to help maintainers respond effectively.
 
 ## 🧩 Issues
@@ -29,7 +27,7 @@ Please ensure your pull request meets the following requirements:
 - Open your pull request against the `main` branch.
 - All tests pass in available continuous integration systems (e.g., GitHub Actions) - to help you with this there is the <a href="#make">make file</a>.
 - Add or modify tests to cover your code changes.
-- If your pull request introduces a new feature, document it in [`docs/mango-go.md`](docs/mango-go.md), not in the README.
+- If your pull request introduces a new feature, document it in [`docs/mango-go.md`](documentation/mango-go.md), not in the README.
 - Follow the checklist in the [Pull Request Template](.github/PULL_REQUEST_TEMPLATE.md:1).
 
 Thank you for contributing!
